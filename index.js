@@ -2,31 +2,59 @@ const yargs = require('yargs');
 
 const geocode = require('./geocode/geocode');
 const weather = require('./weather/weather');
+var express = require("express");
+var app = express();
+var bodyParser = require("body-parser");
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.static("./views"))
+app.set("view engine", "ejs");
 
-const argv = yargs
-  .options({
-    a: {
-      demand: true,
-      alias: 'address',
-      describe: 'Address to fetch weather for',
-      string: true
-    }
-  })
-  .help()
-  .alias('help', 'h')
-  .argv;
 
-geocode.geocodeAddress(argv.address, (errorMessage, results) => {
+
+
+
+
+
+
+
+
+var trans = {address:"",
+            tem:"",
+            semtem:"",
+            summary:""};
+
+app.get("/", function(req, res){
+     res.render("index",{trans});
+});
+
+app.post("/", function(req, res){
+    geocode.geocodeAddress(req.body.temp, (errorMessage, results) => {
   if (errorMessage) {
     console.log(errorMessage);
   } else {
-    console.log(results.address);
+    trans.address = results.address;
     weather.getWeather(results.latitude, results.longitude, (errorMessage, weatherResults) => {
       if (errorMessage) {
-        console.log(errorMessage);
+       // console.log(errorMessage);
+           res.redirect("/");
       } else {
-        console.log(`It's currently ${weatherResults.temperature}. It feels like ${weatherResults.apparentTemperature}.`);
+        trans.tem=weatherResults.temperature;
+          trans.ctem = Math.round((weatherResults.temperature - 32) * 5/9,2);
+          trans.semtem= weatherResults.apparentTemperature;
+          trans.csemtem =Math.round((weatherResults.apparentTemperature - 32)*5/9,2) ;
+          trans.summary=weatherResults.summary;
+           res.redirect("/");
       }
     });
   }
+});
+
+   
+});
+
+
+
+
+app.listen(4000, function(){
+   console.log("Server started!!!"); 
 });
