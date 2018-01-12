@@ -1,5 +1,5 @@
 const yargs = require('yargs');
-
+const port = process.env.PORT || 3000;
 const geocode = require('./geocode/geocode');
 const weather = require('./weather/weather');
 var express = require("express");
@@ -55,6 +55,6 @@ app.post("/", function(req, res){
 
 
 
-app.listen(4000, function(){
-   console.log("Server started!!!"); 
+app.listen(port, function(){
+   console.log(`Server started!!! at port ${port}`); 
 });
