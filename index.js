@@ -1,10 +1,12 @@
 const yargs = require('yargs');
-const port = process.env.PORT || 3000;
+
 const geocode = require('./geocode/geocode');
 const weather = require('./weather/weather');
 var express = require("express");
-var app = express();
 var bodyParser = require("body-parser");
+const port = process.env.PORT || 3000;
+var app = express();
+
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("./views"))
 app.set("view engine", "ejs");
@@ -55,6 +57,6 @@ app.post("/", function(req, res){
 
 
 
-app.listen(port, function(){
-   console.log(`Server started!!! at port ${port}`); 
+app.listen(port, () => {
+  console.log(`Server is up on port ${port}`);
 });
